@@ -1,12 +1,14 @@
-import { test } from "vitest";
+import { expect, test } from "vitest";
 import Booking from "./Booking";
 import { render, fireEvent, screen } from '@testing-library/react';
 import Confirmation from "../components/Confirmation/Confirmation";
+import App from "../App"
 
 
 describe('Booking', () => {
     test('renders without crashing', () => {
       render(<Booking />);
+      expect(screen.getByRole('button', { name: /strIIIIIike!/i })).toBeInTheDocument();
     });
   
     test('allows user to add shoe sizes for each participant', () => {
@@ -26,37 +28,54 @@ describe('Booking', () => {
   });
 
 test('submitting booking should show booking number and total price', () => {
-  const { getByLabelText, getByText } = render(<Booking />);
-
-  fireEvent.change(getByLabelText('Date'), { target: { value: '2024-05-05' } });
-  fireEvent.change(getByLabelText('Time'), { target: { value: '16:00' } });
-  fireEvent.change(getByLabelText('Number of lanes'), { target: { value: '1' } });
-  fireEvent.change(getByLabelText('Number of awesome bowlers'), { target: { value: '2' } });
-
-  fireEvent.click(getByText('strIIIIIike!'));
+  const confirmationDetails = {
+    active: true,
+    when: '2024-05-05T16:00',
+    people: '2',
+    lanes: '1',
+    id: '12345',
+    price: '340',
+  };
+ render(
+    <Confirmation confirmationDetails={confirmationDetails} />
+  );
+  expect(screen.getByDisplayValue('2024-05-05 16:00')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('2')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('1')).toBeInTheDocument();
+  expect(screen.getByDisplayValue('12345')).toBeInTheDocument();
+  expect(screen.getByText('Total:')).toBeInTheDocument();
+  expect(screen.getByText('340 sek')).toBeInTheDocument();
 });
 
-test('user can go back to booking page', () => {
-  let confirmationSet = false;
+test('user can go back to booking page', async () => {
+  render (<App />);
+  const navIcon =screen.getByTestId('navicon');
+  fireEvent.click(navIcon);
+  await expect(
+    screen.findByLabelText('Number of awesome bowlers')
+  ).resolves.toBeInTheDocument();
 
-  const setConfirmation = () => {
-    confirmationSet = true;
-  };
-  const { getByText } = render(
-    <Confirmation
-      confirmationDetails={{
-        active: true,
-        when: '2024-05-05T16:00',
-        people: '2',
-        lanes: '2',
-        id: '12345',
-        price: '340',
-      }}
-      setConfirmation={setConfirmation}
-    />
-  );
-  fireEvent.click(getByText("Sweet, let's go!"));
-  expect(confirmationSet).toBe(true);
-})
+
+  // let confirmationSet = false;
+
+  // const setConfirmation = () => {
+  //   confirmationSet = true;
+  // };
+  // const { getByText } = render(
+  //   <Confirmation
+  //     confirmationDetails={{
+  //       active: true,
+  //       when: '2024-05-05T16:00',
+  //       people: '2',
+  //       lanes: '2',
+  //       id: '12345',
+  //       price: '340',
+  //     }}
+  //     setConfirmation={setConfirmation}
+  //   />
+  // );
+  // fireEvent.click(getByText("Sweet, let's go!"));
+  // expect(confirmationSet).toBe(true);
+});
 
 

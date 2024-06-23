@@ -9,6 +9,7 @@ function Navigation({ setConfirmation }) {
     <nav className={`navigation ${showMenu ? 'show-menu' : ''}`}>
       <img
         src={navicon}
+        data-testid='navicon'
         className='navigation__icon'
         onClick={() => {
           setShowMenu(!showMenu);
