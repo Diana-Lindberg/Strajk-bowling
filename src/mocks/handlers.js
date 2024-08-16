@@ -3,10 +3,11 @@ import { http, HttpResponse } from 'msw';
 const confirmationDetails = {
   active: true,
   when: '2024-05-05T16:00',
-  people: 2,
+  people: 1,
+  size: 37,
   lanes: 1,
-  id: '12345',
-  total: 340,
+  id: 'ABC12345',
+  price: 220,
 };
 
 export const handlers = [
